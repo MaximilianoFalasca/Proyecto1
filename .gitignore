@@ -1,0 +1,10 @@
+venv/
+env/
+*.pyc
+*.pyo
+*.pyd
+*.env
+*.sqlite3
+*.db
+*.log
+
