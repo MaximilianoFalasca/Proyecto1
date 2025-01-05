@@ -1,12 +1,13 @@
 import sqlite3
 from .persona import Persona
+from datetime import datetime
 
 class Pasajero(Persona):
-    db_path = ""
+    db_path = "C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db"
     
     @classmethod
     def inicializar_db(cls):
-        super().inicializar_db(cls.db_path)
+        super().inicializar_db()
         with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -34,13 +35,23 @@ class Pasajero(Persona):
             conn.commit() 
     
     def __init__(self, cuil, nombre, apellido, dni, numeroVuelo, fechaYHoraSalida, telefono=None, mail=None, numeroTarjeta=None):
+        if not isinstance(fechaYHoraSalida, datetime):
+            raise ValueError("La fecha y hora de salida no tiene un formato valido.")
+        if (fechaYHoraSalida.date() <= datetime.now().date()):
+            raise ValueError("La fecha y hora de salida es invalida.")
+        
         super().__init__(cuil, nombre, apellido)
+        try:
+            super().guardar()
+        except ValueError as e:
+            raise ValueError(e.args)
+        
         self.dni=dni
         self.numeroVuelo=numeroVuelo
         self.fechaYHoraSalida=fechaYHoraSalida
         self.telefono=telefono
         self.mail=mail
-        self.numeroTarjeta=numeroTarjeta
+        self.numeroTarjeta=numeroTarjeta    
         
     def guardar(self):
         super().guardar()
@@ -50,7 +61,6 @@ class Pasajero(Persona):
             cursor.execute(f"INSERT INTO pasajero (dni, telefono, mail, cuil, numeroVuelo, fechaYHoraSalida) VALUES (?,?,?,?,?,?)",
                            (self.dni, self.telefono, self.mail, self.cuil, self.numeroVuelo, self.fechaYHoraSalida))
             conn.commit()
-            return {"exito": True, "mensaje": "Pasajero registrado correctamente"}
         
     def agregarTarjeta(self, numeroTarjeta):
         with sqlite3.connect(self.db_path) as conn:

@@ -1,5 +1,5 @@
 from flask import Flask
-from .models import Usuario, Asiento
+from .models import *
 import backend.routes.usuarios as usuarios
 
 def create_app():

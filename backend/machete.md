@@ -1,3 +1,6 @@
+tendria que hacer un archivo que contenga la ubicacion de la db y hacer que github no pueda acceder a ella.
+tengo que hacer los routes y los test que me faltan.
+
 ## iniciar entorno virtual
 
 .\venv\Scripts\activate
@@ -10,7 +13,7 @@ deactivate
 
 pip install -r requirements.txt
 
-## iniciar el servidor:
+## iniciar el servidor (desde \backend):
 
 python app.py
 

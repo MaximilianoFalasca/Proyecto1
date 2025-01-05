@@ -1,7 +1,7 @@
 import sqlite3
 
 class Estado:
-    db_path=''
+    db_path='C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db'
     
     @classmethod
     def inicializar_db(cls):
@@ -20,5 +20,5 @@ class Estado:
     def guardar(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute("INSERT estado (nombre) VALUE (?)",(self.nombre,))
+            cursor.execute("INSERT INTO estado (nombre) VALUES (?)", (self.nombre,))
             conn.commit()

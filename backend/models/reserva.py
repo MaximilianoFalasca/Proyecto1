@@ -5,7 +5,7 @@ import datetime
 
 
 class Reserva:
-    db_path = "app/database/usuarios.db"
+    db_path = "C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db"
 
     @classmethod
     def inicializar_bd(cls):
@@ -80,9 +80,8 @@ class Reserva:
                 if(asiento not in asientos):
                     self._asientos.remove(asiento)
             self.agregarAsientos(asientos)
-            return {'Exito':True,'Mensaje':'Cambio de asientos realizado con exito'}
         else:
-            return {'Exito':False,'Mensaje':f'Si la reserva esta en {self.estado} no se pueden cambiar los asientos'}
+            raise ValueError(f'Si la reserva esta en {self.estado} no se pueden cambiar los asientos')
 
     # tengo que verificar que no se haga varias veces
     def guardar(self):
@@ -101,13 +100,13 @@ class Reserva:
     # tengo que verificar que una reserva cuando pase la fecha del vuelo y el estado sea pending se pase a cancelled y que una vez que sea cancelada no pueda volver a hacerse
     def cambiarEstado(self, estado):
         if(not validarEstado(estado)):
-            return {'Exito':False,'Mensaje':'El estado ingresado no es valido'}
+            raise ValueError('El estado ingresado no es valido')
         
         if(self.numero==None):
-            return {'Exito':False,'Mensaje':'La reserva debe estar guardada en la db previamente'}
+            raise ValueError('La reserva debe estar guardada en la db previamente')
         
         if(self.estado==estado):
-            return {'Exito':False,'Mensaje':'El estado ingresado ya se encuentra registrado'}
+            raise ValueError('El estado ingresado ya se encuentra registrado')
             
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()

@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from backend.models.usuario import Usuario
+from models.usuario import Usuario
 import sqlite3
 
 Usuarios_routes = Blueprint('routes', __name__)

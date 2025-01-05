@@ -2,21 +2,10 @@ import sqlite3
 import os
 
 class Asiento:
-    db_path = "backend/database/aerolineasArgentinas.db"
+    db_path = "C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db"
     
     @classmethod
     def inicializar_db(cls):
-        
-         # Obtiene la ruta absoluta de la base de datos
-        db_abs_path = os.path.abspath(cls.db_path)
-        print(f"Ruta absoluta de la base de datos: {db_abs_path}")
-        
-        # Verifica si el archivo de la base de datos existe
-        if not os.path.exists(db_abs_path):
-            print("La base de datos no existe. Creándola...")
-        else:
-            print(f"Base de datos encontrada en: {db_abs_path}")
-        
         with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("DROP TABLE IF EXISTS asiento")  # Elimina la tabla si existe
@@ -52,6 +41,5 @@ class Asiento:
                 cursor.execute("UPDATE asiento SET numeroReserva = ? WHERE numero = ?",(numeroReserva,self.numero))
                 conn.commit()
                 self.numeroReserva=numeroReserva
-                return {"Exito":True, "Mensaje": f"Se reservo el asiento numero: {self.numero} exitosamente"}
         else:
             return {"Exito":False, "Mensaje": f"El asiento numero: {self.numero} tiene una reserva activa"}

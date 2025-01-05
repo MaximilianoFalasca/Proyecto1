@@ -1,7 +1,7 @@
 import sqlite3
 
 class Usuario:
-    db_path = "app/database/usuarios.db"  # Nueva ruta para la base de datos
+    db_path = "C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db" 
 
     @classmethod
     def inicializar_bd(cls):

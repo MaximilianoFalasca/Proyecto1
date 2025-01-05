@@ -1,6 +1,7 @@
 import unittest
 from backend import Asiento
 import sqlite3
+import tempfile
 
 class TestAsiento(unittest.TestCase):
     
@@ -8,6 +9,8 @@ class TestAsiento(unittest.TestCase):
     def setUpClass(cls):
         """Esta función se ejecuta una vez antes de todas las pruebas."""
         # Inicializamos la base de datos, creando las tablas necesarias
+        cls.db_file = tempfile.NamedTemporaryFile(delete=False)
+        Asiento.db_path = cls.db_file.name
         Asiento.inicializar_db()
     
     def setUp(self):
@@ -59,14 +62,16 @@ class TestAsiento(unittest.TestCase):
         asiento.guardar()
         
         # Reservamos el asiento con un id de reserva
-        asiento.reservar(1)
+        resultado_reserva1 = asiento.reservar(1)
         
         # Intentamos reservar nuevamente el mismo asiento
-        resultado_reserva = asiento.reservar(2)
-        
+        resultado_reserva2 = asiento.reservar(2)
+    
         # Verificamos que la reserva no haya sido exitosa
-        self.assertFalse(resultado_reserva["Exito"])  # El asiento ya está reservado
-        self.assertEqual(resultado_reserva["Mensaje"], f"El asiento numero: {asiento.numero} tiene una reserva activa")
+        self.assertTrue(resultado_reserva1["Exito"])
+        self.assertEqual(resultado_reserva2["Mensaje"], f" Se reservo el asiento numero: {asiento.numero} exitosamente")
+        self.assertFalse(resultado_reserva2["Exito"])  # El asiento ya está reservado
+        self.assertEqual(resultado_reserva2["Mensaje"], f"El asiento numero: {asiento.numero} tiene una reserva activa")
 
     @classmethod
     def tearDownClass(cls):

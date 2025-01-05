@@ -1,7 +1,8 @@
 import sqlite3
+from .persona import Persona
 
-class Tripulacion:
-    db_path=''
+class Tripulacion(Persona):
+    db_path='C:/Users/maxi/Desktop/python/Proyecto1/backend/database/aerolineasArgentinas.db'
     
     @classmethod
     def inicializar_db(cls):
@@ -10,8 +11,8 @@ class Tripulacion:
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS tripulacion(
                     legajo INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                    rol TEXT,
                     horasAcumuladas REAL NOT NULL,
-                    cuil INTEGER NOT NULL UNIQUE,
                     nroVuelo INTEGER NOT NULL,
                     fechaYHoraSalida DATE NOT NULL,
                     FOREIGN KEY (nroVuelo, fechaYHoraSalida) REFERENCES vuelo(nro, fechaYHoraSalida)
@@ -19,9 +20,10 @@ class Tripulacion:
             """)
             conn.commit()
             
-    def __init__(self, horasAcumuladas, cuil, nroVuelo, fechaYHoraSalida):
+    def __init__(self, cuil, nombre, apellido , horasAcumuladas, nroVuelo, fechaYHoraSalida):
+        super().__init__(cuil, nombre, apellido)
+        super().guardar()
         self.horasAcumuladas = horasAcumuladas
-        self.cuil = cuil
         self.nroVuelo = nroVuelo
         self.fechaYHoraSalida = fechaYHoraSalida
     
