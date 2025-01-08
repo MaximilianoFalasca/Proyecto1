@@ -1,3 +1,4 @@
+
 ---
 
 ### **Rutas por Entidad**
@@ -61,11 +62,12 @@
 4. **Tripulación de un Vuelo**  
    - **`GET /vuelos/{id}/tripulacion`**: Listar la tripulación asignada a un vuelo.
 
+5. **Asientos Libres en un Vuelo**
+   - **`GET /vuelos/{id}/asientos-libres`**: Listar los asientos disponibles en un vuelo específico.
+
 ---
 
 ### **¿Cómo continuar?**
 1. **Define la Lógica de Negocio**: Usa los servicios para conectar estas rutas con tu base de datos.
 2. **Agrega Validaciones**: Asegúrate de validar entradas (por ejemplo, que el ID existe antes de procesar una solicitud).
 3. **Pruebas**: Crea casos de prueba para cada endpoint y escenario posible.
-
-¿Te gustaría que detalle alguna de estas rutas con ejemplos de código?

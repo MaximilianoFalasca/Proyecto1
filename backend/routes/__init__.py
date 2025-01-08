@@ -1,2 +1,1 @@
-from .usuarios import Usuarios_routes  # Importa el Blueprint de usuarios
-
+from .pasajero_routes import Pasajero_routes

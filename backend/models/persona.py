@@ -16,6 +16,25 @@ class Persona:
             """)
             conn.commit()
     
+    #esto hay que cambiarlo y que admita tener el dni como primary key tambien, aca que me mande el dni.
+    #fijarse en el actualizar de pasajero
+    @classmethod
+    def actualizarPersona(cls, cuil, **datos):
+        datos_actualizables = ["nombre","apellido"]
+        
+        mensaje="UPDATE persona SET "
+        for key, value in datos:
+            if key in datos_actualizables:
+                mensaje+=f"{key} = {value}, "
+            else:
+                raise ValueError(f"El parametro {key} no es un campo actualizable")
+        mensaje=mensaje[:-2]
+        
+        with sqlite3.connect(cls.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute(mensaje)
+            conn.commit()
+    
     def __init__(self, cuil, nombre, apellido):
         self.cuil=cuil
         self.nombre=nombre

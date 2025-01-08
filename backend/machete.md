@@ -1,6 +1,8 @@
 tendria que hacer un archivo que contenga la ubicacion de la db y hacer que github no pueda acceder a ella.
 tengo que hacer los routes y los test que me faltan.
 
+para comentar varias lineas a la vez es con ctrl + }
+
 ## iniciar entorno virtual
 
 .\venv\Scripts\activate
@@ -32,7 +34,7 @@ Se desean modelar los datos relacionados con vuelos, pasajeros, tripulación y r
 
 De los miembros de la tripulación se conoce su nombre, apellido, CUIL, número de legajo (único), horas de vuelo acumuladas y uno o más roles que pueden cumplir. En cambio, de los pasajeros que viajarán se conoce su nombre, apellido, CUIL, DNI, teléfono, email y, en caso de estar asociados al programa de beneficios de la aerolínea, los puntos acumulados hasta el momento y el nivel de la tarjeta de beneficios.
 
-Para viajar en un vuelo, los pasajeros necesitan hacer una reserva. De la reserva se conocen el número único de reserva, fecha de reserva, los asientos asignados a cada pasajero y el estado (pendiente de pago, pagada, cancelada, etc). Además, se requiere llevar un histórico de los cambios de estado de cada reserva, registrando el día en que la reserva permaneció en cada estado. Esto permitirá llevar un seguimiento detallado del ciclo de vida de cada reserva.
+Para viajar en un vuelo, los pasajeros necesitan hacer una reserva. De la reserva se conocen el número único de reserva, fecha de reserva, los asientos asignados a cada pasajero y el estado (pendiente, pagada, cancelada, etc). Además, se requiere llevar un histórico de los cambios de estado de cada reserva, registrando el día en que la reserva permaneció en cada estado. Esto permitirá llevar un seguimiento detallado del ciclo de vida de cada reserva.
 
 ---
 
