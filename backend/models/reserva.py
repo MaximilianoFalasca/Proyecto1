@@ -23,8 +23,14 @@ class Reserva:
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS reserva(
                     numero INTEGER PRIMARY KEY AUTOINCREMENT,
+                    numeroVuelo INTEGER NOT NULL,
+                    fechaYHoraSalida DATE NOT NULL,
                     fecha DATE NOT NULL,
-                    precio REAL NOT NULL
+                    precio REAL NOT NULL,
+                    dni INTEGER NOT NULL,
+                    FOREIGN KEY (dni) REFERENCES pasajero(dni),
+                    FOREIGN KEY (numeroVuelo) REFERENCES vuelo(nro),
+                    FOREIGN KEY (fechaYHoraSalida) REFERENCES vuelo(nro)
                 )
             """)
             #estado seria pendiente de pago, pagada, cancelada, etc.
@@ -41,6 +47,36 @@ class Reserva:
             """)
             conn.commit()
             
+    @classmethod
+    def obtenerTodos(cls):
+        with sqlite3.connect(cls.db_path) as conn:
+            cursor = conn.cursor()
+            
+            cursor.execute("""
+                    SELECT r.numero, r.fecha, e.nombreEstado, r.dni, r.numeroVuelo, r.fechaYHoraSalida
+                    FROM reserva r
+                        INNER JOIN esta e ON (e.numeroReserva = r.numero)
+                """)       
+            
+            reservas = cursor.fetchall()
+            reservas_con_asientos = []
+            
+            for reserva in reservas:
+                asientos = Asiento.asientos_ocupados_por(reserva[0])
+                reserva_nueva = cls(
+                    dni = reserva[3],
+                    numeroVuelo = reserva[4],
+                    fechaYHoraSalida = reserva[5],
+                    asientos = Asiento.asientos_ocupados_por(reserva[0])
+                )
+                reserva_nueva.fecha = reserva[1]
+                reserva_nueva.numero = reserva[0]
+                reserva_nueva.estado = reserva[2]
+                
+                reservas_con_asientos.append(reserva_nueva)
+            return reservas_con_asientos
+            
+            
     #vamos a inicializar una reserva e insertarle los datos que no se haga en el init directamente, se crea una funcion en 
     #asiento para ver los que estan reservados por uno mismo
     
@@ -54,7 +90,7 @@ class Reserva:
         with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                    SELECT r.fecha, e.nombreEstado
+                    SELECT r.fecha, e.nombreEstado, r.dni, r.numeroVuelo, r.fechaYHoraSalida
                     FROM reserva r
                         INNER JOIN esta e ON (e.numeroReserva = r.numero)
                     WHERE r.numero = (?)
@@ -68,30 +104,45 @@ class Reserva:
             asientos = Asiento.asientos_ocupados_por(numero)
     
             reserva = cls(
-                fecha = respuesta[0],
+                dni = respuesta[2],
+                numeroVuelo= respuesta[3],
+                fechaYHoraSalida = respuesta[4],
                 asientos = asientos
             )
             
+            reserva.fecha = respuesta[0]
             reserva.numero = numero
             reserva.estado = respuesta[1]
 
             return reserva
+        
+    @classmethod
+    def eliminarReserva(cls,numero):
+        with sqlite3.connect(cls.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM reserva WHERE numero = ?",(numero, ))
+            cursor.execute("DELETE FROM ocupa WHERE numeroReserva = ?",(numero, ))
+            conn.commit()
     
     def _inicializarEstado(self):
         if(self.numero!=None):
             with sqlite3.connect(self.db_path) as conn:
                 cursor=conn.cursor()
-                cursor.execute("INSERT INTO esta (numeroReserva, nombreEstado, fechaInicio, fechaFin) VALUE (?,?,?,?)",(self.numero, 'Pending', self.fecha, None))
+                cursor.execute("INSERT INTO esta (numeroReserva, nombreEstado, fechaInicio, fechaFin) VALUES (?,?,?,?)",(self.numero, 'Pending', self.fecha, None))
                 conn.commit()
                 self.estado='Pending'
         else:
             raise ValueError("La reserva tiene que estar inicializada previamente")
                 
     # no hacemos directamente el guardar aca para que se pueda provar el objeto sin tener que interactuar con la db
-    def __init__(self, fecha, asientos=None):
-        self.fecha = fecha
+    def __init__(self, dni, numeroVuelo, fechaYHoraSalida, asientos=None):
+        self.dni = dni
+        self.numeroVuelo = numeroVuelo
+        self.fechaYHoraSalida = fechaYHoraSalida
+        self.fecha = datetime.datetime.now()
         self.precio = 0
         self._asientos = []
+        self.numero = None
         self.agregarAsientos(asientos)
 
     # tengo que verificar que cuando ya se pago o cuando este cancelado no pueda seguir agregando asientos.
@@ -100,7 +151,7 @@ class Reserva:
             if isinstance(asiento, Asiento) and (asiento not in self._asientos):
                 self._asientos.append(asiento)
                 self.precio+=asiento.precio
-                if not (asiento.estaRelacionadoCon(self.numero)):
+                if self.numero != None and not (asiento.estaRelacionadoCon(self.numero)):
                     asiento.relacionarConReserva(self.numero)
                 if(self.numero != None):
                     with sqlite3.connect(self.db_path) as conn:
@@ -139,22 +190,26 @@ class Reserva:
         if(self.numero==None):
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("INSERT INTO reserva (fecha, precio) VALUES (?, ?)", (self.fecha, self.precio))
+                cursor.execute("INSERT INTO reserva (dni, fecha, precio, numeroVuelo, fechaYHoraSalida) VALUES (?,?,?,?,?)", (self.dni, self.fecha, self.precio, self.numeroVuelo, self.fechaYHoraSalida))
                 self.numero = cursor.lastrowid
-                
                 # esto no se hace todavia porque no se confirmo el pago, estamos en pending todavia
                 # for asiento in self._asientos:
                 #     if isinstance(asiento, Asiento):
                 #         asiento.reservar(self.numero)
                 
                 conn.commit()
-                self._inicializarEstado()
-                return self       
+            for asiento in self.asientos:
+                if not (asiento.estaRelacionadoCon(self.numero)):
+                    asiento.relacionarConReserva(self.numero)
+            self._inicializarEstado()
+            return self       
         else:
             raise ValueError("La reserva ya esta guardada") 
 
     # tengo que verificar que una reserva cuando pase a cancelled no pueda volver a cambiar de estado
     def cambiarEstado(self, estado):
+        from .pasajero import Pasajero
+        
         if(not validarEstado(estado)):
             raise ValueError('El estado ingresado no es valido')
         
@@ -174,7 +229,8 @@ class Reserva:
             fecha = datetime.datetime.now()
             fecha_sql = f"{fecha.year}-{fecha.month}-{fecha.day}"
             
-            cursor.execute(f"UPDATE esta SET fechaFin = {fecha_sql} WHERE numeroReserva = {self.numero} and nombreEstado = {self.estado}")
-            cursor.execute("INSERT INTO esta (numeroReserva, nombreEstado, fechaInicio, fechaFin) VALUE (?,?,?,?)", (self.numero, estado, fecha_sql, None))
+            cursor.execute(f"UPDATE esta SET fechaFin = ? WHERE numeroReserva = ? and nombreEstado = ?",(fecha_sql, self.numero, self.estado))
+            cursor.execute("INSERT INTO esta (numeroReserva, nombreEstado, fechaInicio, fechaFin) VALUES (?,?,?,?)", (self.numero, estado, fecha_sql, None))
             
             conn.commit() 
+            

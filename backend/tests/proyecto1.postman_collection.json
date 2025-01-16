@@ -1,0 +1,723 @@
+{
+	"info": {
+		"_postman_id": "066e53f7-e4b5-4186-9052-9cc50f2fe0b7",
+		"name": "proyecto1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16349549"
+	},
+	"item": [
+		{
+			"name": "avion",
+			"item": [
+				{
+					"name": "aviones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/aviones",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"aviones"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "aviones",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "nombre",
+								"value": "aaa",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "apellido",
+								"value": "bbb",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"matricula\": \"1AA2\",\r\n    \"fechaFabricacion\":\"1999-12-01\",\r\n    \"capacidad\":100,\r\n    \"nombreModelo\":\"AAAModelo\",\r\n    \"nombreMarca\":\"AAAMarca\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/aviones",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"aviones"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "aaa",
+									"disabled": true
+								},
+								{
+									"key": "apellido",
+									"value": "bbb",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "aviones/{matricula}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "aviones/{matricula}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fechaFabricacion\":\"1999-12-02\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/aviones/1AA1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"aviones",
+								"1AA1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "aviones",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/aviones/1AA2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"aviones",
+								"1AA2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "pasajero",
+			"item": [
+				{
+					"name": "pasajeros",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dni\":43,  \r\n    \"mail\":\"aaa@asdonasp\", \r\n    \"cuil\":34, \r\n    \"numeroVuelo\":1, \r\n    \"fechaYHoraSalida\":\"2025-12-02 14:30:00\", \r\n    \"nombre\":\"pasajero[6]\", \r\n    \"apellido\":\"pasajero[7]\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/pasajeros",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"pasajeros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pasajeros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/pasajeros",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"pasajeros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pasajeros/{dni}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/pasajeros/43",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"pasajeros",
+								"43"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pasajeros/{dni}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/pasajeros/43",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"pasajeros",
+								"43"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "pasajeros/{dni}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\":\"ma\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/pasajeros/43",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"pasajeros",
+								"43"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reserva",
+			"item": [
+				{
+					"name": "reservas",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "reservas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dni\":43,\r\n    \"vuelo\":{\r\n        \"nro\":1,\r\n        \"fechaYHoraSalida\":\"2025-10-01 13:00:00\"\r\n    },\r\n    \"asientos\":[\r\n        {\r\n            \"matricula\":\"1AA2\",\r\n            \"numero\":1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reservas",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reservas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reservas/{numero}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/reservas/3",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reservas",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reservas/{numero}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"estado\":\"Cancelled\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reservas/6",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reservas",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reservas/{numero}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "reservas/{numero}/asientos",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"asientos\" : [\r\n        {\r\n            \"matricula\":\"1AA6\",\r\n            \"numero\":6\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/reservas/7/asientos",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"reservas",
+								"7",
+								"asientos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tarjeta",
+			"item": [
+				{
+					"name": "tarjetas",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "tarjetas",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nroTarjeta\": 1212\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tarjetas",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tarjetas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tarjetas/{nroTarjeta}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "tarjetas/{nroTarjeta}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"puntos\":1.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/tarjetas/1212",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tarjetas",
+								"1212"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "tarjetas/{nroTarjeta}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/tarjetas/1212",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"tarjetas",
+								"1212"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "vuelo",
+			"item": [
+				{
+					"name": "vuelos",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "vuelos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nro\":1,\r\n    \"fechaYHoraSalida\":\"2025-10-01 13:00:00\",\r\n    \"matricula\":\"1AA2\",\r\n    \"codigoAeropuertoSalida\":1,\r\n    \"codigoAeropuertoLlegada\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/vuelos",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"vuelos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "vuelos/{nro}/{fechaSalida}T{horaSalida}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "vuelos/{nro}/{fechaSalida}T{horaSalida}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/vuelos/1/2025-10-01T13:00:00",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"vuelos",
+								"1",
+								"2025-10-01T13:00:00"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "vuelos/{nro}/{fechaSalida}T{horaSalida}",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/vuelos/1/2025-10-01T13:00:00",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"vuelos",
+								"1",
+								"2025-10-01T13:00:00"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "asiento",
+			"item": [
+				{
+					"name": "asientos",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "asientos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"matricula\":\"1AA2\",\r\n    \"numero\":1,\r\n    \"precio\":200.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/asientos",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"asientos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "asientos/{numero}/{matricula}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "asientos/{numero}/{matricula}",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:5000/asientos/1/1AA2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"asientos",
+								"1",
+								"1AA2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "asientos/{numero}/{matricula}",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -1,5 +1,6 @@
 import sqlite3
 from .persona import Persona
+from .vuelo import Vuelo
 from datetime import datetime
 
 class Pasajero(Persona):
@@ -12,23 +13,10 @@ class Pasajero(Persona):
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS pasajero(
-                    dni INTEGER NOT NULL UNIQUE PRIMARY KEY,
+                    dni INTEGER NOT NULL PRIMARY KEY,
                     telefono INTEGER,
                     mail TEXT,
-                    cuil INTEGER NOT NULL UNIQUE,
-                    numeroVuelo INTEGER NOT NULL,
-                    fechaYHoraSalida DATE NOT NULL,
-                    FOREIGN KEY (cuil) REFERENCES persona(cuil),
-                    FOREIGN KEY (numeroVuelo) REFERENCES vuelo(numero),
-                    FOREIGN KEY (fechaYHoraSalida) REFERENCES vuelo(fechaYHoraSalida)
-                )               
-            """)
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS asociado(
-                    dni INTEGER NOT NULL PRIMARY KEY,
-                    numeroTarjeta INTEGER NOT NULL,
-                    FOREIGN KEY (dni) REFERENCES pasajero(dni),
-                    FOREIGN KEY (numeroTarjeta) REFERENCES beneficio(nroTarjeta)
+                    FOREIGN KEY (dni) REFERENCES persona(dni)
                 )               
             """)
             conn.commit() 
@@ -46,26 +34,22 @@ class Pasajero(Persona):
         with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT * 
+                SELECT p.dni, p.telefono, p.mail, a.numeroTarjeta, pe.cuil, pe.nombre, pe.apellido 
                 FROM pasajero p
                     INNER JOIN persona pe ON (pe.dni=p.dni)
                     LEFT JOIN asociado a ON (a.dni=p.dni)
                 WHERE p.dni = (?)
             """,(dni,))
             respuesta = cursor.fetchone()
-            if not (respuesta):
-                raise ValueError(f"No existe el pasajero con dni {dni}")
             
             return cls(
                 dni=respuesta[0],
                 telefono=respuesta[1], 
                 mail=respuesta[2], 
-                cuil=respuesta[3], 
-                numeroVuelo=respuesta[4], 
-                fechaYHoraSalida=respuesta[5], 
-                nombre=respuesta[6], 
-                apellido=respuesta[7], 
-                numeroTarjeta=respuesta[8] if len(respuesta)>8 else None
+                numeroTarjeta=respuesta[3],
+                cuil=respuesta[4], 
+                nombre=respuesta[5], 
+                apellido=respuesta[6]
             )
             
     @classmethod
@@ -73,28 +57,27 @@ class Pasajero(Persona):
         with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("""
-                SELECT * 
+                SELECT p.dni, p.telefono, p.mail, a.numeroTarjeta, pe.cuil, pe.nombre, pe.apellido 
                 FROM pasajero p
-                    LEFT JOIN asociado a ON (a.dni=p.dni)           
+                    LEFT JOIN asociado a ON (a.dni=p.dni)  
+                    INNER JOIN persona pe ON (pe.dni=p.dni)         
             """)
             filas = cursor.fetchall()
             # por cada elemento en filas se intancia un pasajero con los parametros mandados.
             return [
                 cls(
-                    cuil=fila[0], 
-                    nombre=fila[1], 
-                    apellido=fila[2], 
-                    dni=fila[3], 
-                    numeroVuelo=fila[4], 
-                    fechaYHoraSalida=fila[5], 
-                    telefono=fila[6], 
-                    mail=fila[7], 
-                    numeroTarjeta=fila[8] if len(fila)>8 else None
+                    dni=fila[0],
+                    telefono=fila[1], 
+                    mail=fila[2], 
+                    numeroTarjeta=fila[3],
+                    cuil=fila[4], 
+                    nombre=fila[5], 
+                    apellido=fila[6],
                 ) for fila in filas
             ]
     
     @classmethod
-    def actualizarPasajero(cls, dni, **datos):
+    def actualizarPasajero(cls, dni, datos:dict):
         campos_actualizables=["telefono","mail","nombre","apellido"]
         
         # creamos el mensaje para despues ejecutarlo con los parametros enviados, tanto para pasajeros como para persona.
@@ -104,62 +87,55 @@ class Pasajero(Persona):
         
         for campo, valor in datos.items():
             if campo in campos_actualizables:
-                mensaje+=f"{campo} = {valor}, "
-            else:
                 if campo == "nombre" or campo == "apellido":
                     datos_a_actualizar_padre[campo]=valor
                 else:
-                    raise ValueError(f"El parametro {campo} no es un campo actualizable")
+                    mensaje+=f"{campo} = '{valor}', "
+            else:
+                raise ValueError(f"El parametro {campo} no es un campo actualizable")
 
         # cortamos los dos ultimos caracteres (quedaria un ", " de mas) y terminamos la consulta
-        mensaje = mensaje[:-2]
-        mensaje += f" WHERE dni = {dni}"
+        if mensaje != "UPDATE pasajero SET ":
+            mensaje = mensaje[:-2]
+            mensaje += f" WHERE dni = '{dni}'"
         
-        with sqlite3.connect(cls.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute(mensaje)
-            conn.commit()
-            
-        Persona.actualizarPersona(dni,datos_a_actualizar_padre)
+            with sqlite3.connect(cls.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute(mensaje)
+                conn.commit()
+        
+        if len(datos_a_actualizar_padre) > 0:
+            Persona.actualizarPersona(dni,datos_a_actualizar_padre)
     
-    def __init__(self, cuil, nombre, apellido, dni, numeroVuelo, fechaYHoraSalida, telefono=None, mail=None, numeroTarjeta=None):
-        if not isinstance(fechaYHoraSalida, datetime):
-            raise ValueError("La fecha y hora de salida no tiene un formato valido.")
-        if (fechaYHoraSalida.date() <= datetime.now().date()):
-            raise ValueError("La fecha y hora de salida es invalida.")
-        
-        super().__init__(cuil, nombre, apellido)
+    def __init__(self, cuil, nombre, apellido, dni, telefono=None, mail=None, numeroTarjeta=None):
+        super().__init__(dni, cuil, nombre, apellido, numeroTarjeta)
         try:
             super().guardar()
-        except ValueError as e:
+        except Exception as e:
             raise ValueError(e.args)
-        
-        self.dni=dni
-        self.numeroVuelo=numeroVuelo
-        self.fechaYHoraSalida=fechaYHoraSalida
         self.telefono=telefono
-        self.mail=mail
-        self.numeroTarjeta=numeroTarjeta    
+        self.mail=mail 
         
     def guardar(self):
         super().guardar()
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             
-            cursor.execute(f"INSERT INTO pasajero (dni, telefono, mail, cuil, numeroVuelo, fechaYHoraSalida) VALUES (?,?,?,?,?,?)",
-                           (self.dni, self.telefono, self.mail, self.cuil, self.numeroVuelo, self.fechaYHoraSalida))
+            cursor.execute(f"INSERT INTO pasajero (dni, telefono, mail) VALUES (?,?,?)",
+                           (self.dni, self.telefono, self.mail))
 
-            if(self.numeroTarjeta!=None):
-                cursor.execute(f"INSERT INTO asociado (dni, numeroTarjeta) VALUES (?,?)", (self.dni, self.numeroTarjeta))
-            
             conn.commit()
-        
-    def agregarTarjeta(self, numeroTarjeta):
+            
+    def puedeVolar(self, fechaSalida, fechaLlegada):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
-            if(self.numeroTarjeta==None):
-                cursor.execute("INSERT INTO asociado (dni, numeroTarjeta) VALUES (?,?)", (self.dni, numeroTarjeta))
-            else:
-                cursor.execute(f"UPDATE asociado SET numeroTarjeta = {numeroTarjeta} WHERE dni = {self.dni}")
-            conn.commit()
-            self.numeroTarjeta=numeroTarjeta
+
+            cursor.execute("""
+                SELECT 1
+                FROM reserva r 
+                    INNER JOIN vuelo v ON (r.numeroVuelo = v.nro AND r.fechaYHoraSalida = v.fechaYHoraSalida)
+                WHERE r.dni = ? AND v.fechaYHoraSalida > DATETIME('now') AND (v.fechaYHoraSalida < ? OR v.fechaYHoraLlegada > ?)
+            """,(self.dni, fechaLlegada, fechaSalida))
+            respuesta = cursor.fetchone()
+            
+            return respuesta is None

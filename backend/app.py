@@ -23,6 +23,12 @@ app = Flask(__name__)
 
 # Registrar el Blueprint
 app.register_blueprint(Pasajero_routes)
+app.register_blueprint(Avion_routes)
+app.register_blueprint(Reserva_routes)
+app.register_blueprint(Tripulacion_routes)
+app.register_blueprint(Vuelo_routes)
+app.register_blueprint(Tarjeta_routes)
+app.register_blueprint(Asiento_routes)
 
 if __name__ == '__main__':
     app.run(debug=True)

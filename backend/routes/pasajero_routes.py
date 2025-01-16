@@ -1,22 +1,20 @@
 from flask import Blueprint, jsonify, request
 from models import Pasajero
 
-Pasajero_routes = Blueprint('routes',__name__)
+Pasajero_routes = Blueprint('pasajero_routes',__name__)
 
 @Pasajero_routes.route('/pasajeros/<int:dni>', methods=['GET'])
 def obtener_pasajero(dni):
     try:
         pasajero = Pasajero.obtenerPasajero(dni)
         return jsonify({
-            "dni":pasajero[0], 
-            "telefono":pasajero[1], 
-            "mail":pasajero[2], 
-            "cuil":pasajero[3], 
-            "numeroVuelo":pasajero[4], 
-            "fechaYHoraSalida":pasajero[5], 
-            "nombre":pasajero[6], 
-            "apellido":pasajero[7], 
-            "numeroTarjeta":pasajero[8]
+            "dni":pasajero.dni, 
+            "telefono":pasajero.telefono, 
+            "mail":pasajero.mail, 
+            "cuil":pasajero.cuil, 
+            "nombre":pasajero.nombre, 
+            "apellido":pasajero.apellido, 
+            "numeroTarjeta":pasajero.numeroTarjeta
         }), 200
     except Exception as e:
         return jsonify({"error":str(e)}), 400
@@ -24,25 +22,24 @@ def obtener_pasajero(dni):
 @Pasajero_routes.route('/pasajeros', methods=['GET'])
 def obtener_pasajeros():
     pasajeros = Pasajero.obtenerTodos()
+    print(pasajeros)
     return jsonify([
         {
-            "dni":pasajero[0], 
-            "telefono":pasajero[1], 
-            "mail":pasajero[2], 
-            "cuil":pasajero[3], 
-            "numeroVuelo":pasajero[4], 
-            "fechaYHoraSalida":pasajero[5], 
-            "nombre":pasajero[6], 
-            "apellido":pasajero[7], 
-            "numeroTarjeta":pasajero[8]
+            "dni":pasajero.dni, 
+            "telefono":pasajero.telefono, 
+            "mail":pasajero.mail, 
+            "cuil":pasajero.cuil, 
+            "nombre":pasajero.nombre, 
+            "apellido":pasajero.apellido, 
+            "numeroTarjeta":pasajero.numeroTarjeta
         } for pasajero in pasajeros
     ]), 200
     
-@Pasajero_routes.route('/pasajeros', method=['POST'])
+@Pasajero_routes.route('/pasajeros', methods=['POST'])
 def registrar_pasajero():
     pasajero = request.json
     
-    if not pasajero or not pasajero.get('cuil') or not pasajero.get('nombre') or not pasajero.get('apellido') or not pasajero.get('dni') or not pasajero.get('numeroVuelo') or not pasajero.get('fechaYHoraSalida'):
+    if not pasajero or not pasajero.get('cuil') or not pasajero.get('nombre') or not pasajero.get('apellido') or not pasajero.get('dni'):
         return jsonify({"error": "Faltan datos"}), 400
     
     try:
@@ -52,7 +49,7 @@ def registrar_pasajero():
     except Exception as e:
         return jsonify({"error": str(e)}), 400 
     
-@Pasajero_routes.route('/pasajeros/add_card', method=['POST'])
+@Pasajero_routes.route('/pasajeros/add_card', methods=['POST'])
 def agregar_tarjeta():
     datos = request.json
     
@@ -66,7 +63,7 @@ def agregar_tarjeta():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@Pasajero_routes.route('/pasajeros/<int:dni>', method=['PUT'])
+@Pasajero_routes.route('/pasajeros/<int:dni>', methods=['PUT'])
 def modificar_pasajero(dni):
     datos = request.json
     try:
@@ -75,7 +72,7 @@ def modificar_pasajero(dni):
     except Exception as e:
         return jsonify({"error":str(e)}), 400
     
-@Pasajero_routes.route('/pasajeros/<int:dni>', method=['DELETE'])
+@Pasajero_routes.route('/pasajeros/<int:dni>', methods=['DELETE'])
 def eliminar_pasajero(dni):
     try:
         Pasajero.eliminarPasajero(dni)

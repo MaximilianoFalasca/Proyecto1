@@ -9,7 +9,7 @@ class Aeropuerto:
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS Aeropuerto(
-                    codigo INTEGER AUTOINCREMENT PRIMARY KEY,
+                    codigo INTEGER PRIMARY KEY AUTOINCREMENT,
                     nombre TEXT NOT NULL,
                     nombreCiudad TEXT NOT NULL,
                     nombrePaiz TEXT NOT NULL

@@ -9,15 +9,15 @@ class TarjetaBeneficio:
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS beneficio (
-                    nroTarjeta INTEGER PRIMARY KEY UNIQUE NOT NULL,
+                    nroTarjeta INTEGER PRIMARY KEY NOT NULL,
                     puntos REAL NOT NULL
                 )
             """)
             conn.commit()
             
     @classmethod
-    def obtener_todos(cls):
-        with sqlite3.connect(cls) as conn:
+    def obtenerTodos(cls):
+        with sqlite3.connect(cls.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM beneficio")
             filas = cursor.fetchall()
@@ -31,25 +31,36 @@ class TarjetaBeneficio:
             cursor.execute(f"""
                 SELECT *
                 FROM beneficio b
-                WHILE (b.nroTarjeta={nroTarjeta})
+                WHERE b.nroTarjeta = '{nroTarjeta}'
             """)
             beneficio = cursor.fetchone()
             return cls(nroTarjeta=beneficio[0], puntos=beneficio[1])
+        
+    @classmethod
+    def actualizarTarjeta(cls, nroTarjeta, puntos):
+        with sqlite3.connect(cls.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE beneficio SET puntos = ? WHERE nroTarjeta = ?", (puntos, nroTarjeta))
+            conn.commit()
 
-    def __init__(self, nroTarjeta, puntos):
+    @classmethod
+    def eliminarTarjeta(cls, nroTarjeta):
+        with sqlite3.connect(cls.db_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM beneficio WHERE nroTarjeta = ?", (nroTarjeta,))
+            conn.commit()
+
+    def __init__(self, nroTarjeta, puntos=None):
         self.nroTarjeta=nroTarjeta
-        self.puntos=puntos
+        if puntos==None:
+            self.puntos=0
+        else:
+            self.puntos=puntos
 
     def guardar(self):
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.cursor()
             cursor.execute("INSERT INTO beneficio (nroTarjeta, puntos) VALUES (? ,?)",(self.nroTarjeta,self.puntos))
-            conn.commit()
-            
-    def actualizar(self):
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute("UPDATE beneficio SET puntos = ? WHERE nroTarjeta = ?", (self.puntos, self.nroTarjeta))
             conn.commit()
     
     def calcular_descuento(self, monto):
